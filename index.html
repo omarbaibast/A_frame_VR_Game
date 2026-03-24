@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  </head>
+
+  <body>
+    <a-scene>
+      <a-entity id="player" camera position="0 1.6 0"></a-entity>
+
+      <a-box position="0 1 -5" color="red"></a-box>
+
+      <script>
+        let player = document.querySelector('#player');
+
+        function update() {
+          let gamepads = navigator.getGamepads();
+
+          if (gamepads[0]) {
+            let gp = gamepads[0];
+
+            let x = gp.axes[0]; // left stick horizontal
+            let y = gp.axes[1]; // left stick vertical
+
+            let pos = player.getAttribute('position');
+
+            pos.x += x * 0.1;
+            pos.z += y * 0.1;
+
+            player.setAttribute('position', pos);
+          }
+
+          requestAnimationFrame(update);
+        }
+
+        update();
+      </script>
+    </a-scene>
+  </body>
+</html>
