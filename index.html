@@ -1,40 +1,65 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-  </head>
+<head>
+  <meta charset="utf-8">
+  <title>PS4 Controller A-Frame</title>
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+</head>
 
-  <body>
-    <a-scene>
-      <a-entity id="player" camera position="0 1.6 0"></a-entity>
+<body>
+  <a-scene>
 
-      <a-box position="0 1 -5" color="red"></a-box>
+    <!-- PLAYER RIG (YOU MOVE THIS) -->
+    <a-entity id="rig" position="0 1.6 0">
+      <a-entity camera look-controls></a-entity>
+    </a-entity>
 
-      <script>
-        let player = document.querySelector('#player');
+    <!-- SIMPLE WORLD -->
+    <a-plane rotation="-90 0 0" width="20" height="20" color="#7BC8A4"></a-plane>
+    <a-box position="0 1 -5" color="red"></a-box>
+    <a-sphere position="2 1 -3" radius="1" color="blue"></a-sphere>
+    <a-sky color="#ECECEC"></a-sky>
 
-        function update() {
-          let gamepads = navigator.getGamepads();
+  </a-scene>
 
-          if (gamepads[0]) {
-            let gp = gamepads[0];
+  <script>
+    let rig = document.querySelector('#rig');
 
-            let x = gp.axes[0]; // left stick horizontal
-            let y = gp.axes[1]; // left stick vertical
+    function update() {
+      let gamepads = navigator.getGamepads();
 
-            let pos = player.getAttribute('position');
+      if (gamepads[0]) {
+        let gp = gamepads[0];
 
-            pos.x += x * 0.1;
-            pos.z += y * 0.1;
+        // Left joystick
+        let x = gp.axes[0]; // left/right
+        let y = gp.axes[1]; // forward/back
 
-            player.setAttribute('position', pos);
-          }
+        // Deadzone (important to avoid drift)
+        if (Math.abs(x) < 0.1) x = 0;
+        if (Math.abs(y) < 0.1) y = 0;
 
-          requestAnimationFrame(update);
-        }
+        let pos = rig.getAttribute('position');
 
-        update();
-      </script>
-    </a-scene>
-  </body>
+        // Movement
+        pos.x += x * 0.1;
+        pos.z += y * 0.1;
+
+        rig.setAttribute('position', pos);
+
+        // Debug (optional)
+        console.log("Axes:", x, y);
+      }
+
+      requestAnimationFrame(update);
+    }
+
+    // IMPORTANT: wait for user interaction
+    window.addEventListener('click', () => {
+      console.log("Gamepad activated");
+      update();
+    });
+  </script>
+
+</body>
 </html>
